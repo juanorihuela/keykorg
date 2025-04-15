@@ -16,9 +16,8 @@ Keypad o MicroPad DIY con MIDI
 ### clonar repositorio
 `git clone <URL_REPO>`  
 
-
 ### crear venv
-Crea un entorno virtual para ejecutar el script
+Crea un entorno virtual para ejecutar el script  
 `python -m venv <VENV_NAME>`
 
 ### instalar paquetes
