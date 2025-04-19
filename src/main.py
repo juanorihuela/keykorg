@@ -58,17 +58,15 @@ class KeyKorg:
                 elif msg.type == 'note_off' or (msg.type == 'note_on' and msg.velocity == 0):
                     active_notes.discard(msg.note)
 
-    @classmethod
-    def execute(cls):
+    def execute(self):
         """
         Ejecuta el script y se mantiene escuchando los mensajes del MIDI
         """
         try:
             logger.info("Iniciando KeyKorg")
-            instance = cls()
-            if not instance.wait_for_connection():
+            if not self.wait_for_connection():
                 raise ConnectionFailedException("No se encuentra el dispositivo")
-            instance.listener()
+            self.listener()
 
         except KeyboardInterrupt as key_ex:
             logger.info(key_ex)
@@ -79,4 +77,4 @@ class KeyKorg:
         except Exception as ex:
             logger.error(f"general -> {ex}")
 
-KeyKorg.execute()
+KeyKorg().execute()
