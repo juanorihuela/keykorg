@@ -45,8 +45,8 @@ def main() -> None:
 
         handler = PadHandler(
             pad_map=settings.load_pad_map(),
-            command_service=CommandService(),
-            sequence_service=SequenceService(),
+            command_service=CommandService(notifier),
+            sequence_service=SequenceService(notifier),
             notification_service=notifier,
         )
 
@@ -54,6 +54,7 @@ def main() -> None:
 
     except KeyboardInterrupt:
         logger.info("KeyKorg detenido por el usuario")
+        notifier.notify_bye("KeyKorg", "Saliendo")
 
     except ConnectionFailedException as ex:
         logger.error(f"CONNECTION_FAIL | error={ex}")
@@ -61,6 +62,7 @@ def main() -> None:
 
     except Exception as ex:
         logger.error(f"GENERAL_ERROR | error={type(ex).__name__}: {ex}")
+        notifier.notify_alert("KeyKorg", f"Error inesperado: {type(ex).__name__}")
 
 
 if __name__ == "__main__":

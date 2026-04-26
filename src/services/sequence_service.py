@@ -4,10 +4,15 @@ import time
 import logging
 from typing import Any
 
+from services.notification_service import NotificationService
+
 logger = logging.getLogger(__name__)
 
 
 class SequenceService:
+    def __init__(self, notification_service: NotificationService):
+        self.notification_service = notification_service
+
     def execute(self, steps: list[dict[str, Any]], pad_name: str) -> bool:
         try:
             for step in steps:
@@ -16,6 +21,7 @@ class SequenceService:
             return True
         except Exception as ex:
             logger.error(f"SEQ_FAIL | name={pad_name!r} | error={type(ex).__name__}: {ex}")
+            self.notification_service.notify_alert(pad_name, "Error en secuencia")
             return False
 
     def _run_step(self, step: dict[str, Any]) -> None:

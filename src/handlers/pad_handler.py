@@ -25,6 +25,7 @@ class PadHandler:
         pad_config = self.pad_map.get(event.pad_id)
         if not pad_config:
             logger.warning(f"PAD_UNMAPPED | pad_id={event.pad_id}")
+            self.notification_service.notify_warning("Pad sin mapear", f"pad_id={event.pad_id}")
             return
 
         pad_name = pad_config.get("name", f"pad_{event.pad_id}")
@@ -36,8 +37,6 @@ class PadHandler:
 
         if success:
             self.notification_service.notify_done(pad_name)
-        else:
-            self.notification_service.notify_alert(pad_name, "Error al ejecutar")
 
     def _dispatch(self, pad_type: str, pad_config: dict, pad_name: str) -> bool:
         if pad_type == "simple":
@@ -45,4 +44,5 @@ class PadHandler:
         if pad_type == "sequence":
             return self.sequence_service.execute(pad_config["steps"], pad_name)
         logger.error(f"PAD_UNKNOWN_TYPE | type={pad_type!r}")
+        self.notification_service.notify_warning(pad_name, "Tipo de pad desconocido")
         return False

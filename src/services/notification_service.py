@@ -8,8 +8,9 @@ logger = logging.getLogger(__name__)
 
 
 class NotificationService:
-    def __init__(self, sounds_dir: Path):
+    def __init__(self, sounds_dir: Path, volume: float = 0.7):
         self.sounds_dir = sounds_dir
+        self.volume = volume
 
     def notify_success(self, title: str, message: str = "") -> None:
         self._notify(title, message)
@@ -27,6 +28,10 @@ class NotificationService:
         self._notify(title, message)
         self._play_sound("alert.wav")
 
+    def notify_bye(self, title: str, message: str = "") -> None:
+        self._notify(title, message)
+        self._play_sound("bye.wav")
+
     def _notify(self, title: str, message: str) -> None:
         try:
             subprocess.Popen(["notify-send", title, message])
@@ -38,7 +43,7 @@ class NotificationService:
         if not sound_path.exists():
             logger.warning(f"SOUND_NOT_FOUND | path={sound_path}")
             return
-        player = get_sound_player()
+        player = get_sound_player(self.volume)
         if not player:
             logger.warning("SOUND_NO_PLAYER | no se encontró reproductor de audio")
             return
