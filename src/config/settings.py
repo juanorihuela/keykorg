@@ -3,6 +3,7 @@ from pathlib import Path
 from dotenv import dotenv_values
 
 from config.constants import SO_CATALOG
+from helpers.os_helpers import get_host_so
 
 PROJECT_ROOT = Path(__file__).parent.parent.parent
 
@@ -32,3 +33,7 @@ class Settings:
         if so not in SO_CATALOG:
             available = list(SO_CATALOG.keys())
             raise ValueError(f"SO '{so}' no está en el catálogo. Disponibles: {available}")
+
+        host = get_host_so()
+        if host is not None and host != so:
+            raise ValueError(f"SO anfitrión es '{host}', no se puede ejecutar en modo '{so}'")
