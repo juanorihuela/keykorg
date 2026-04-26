@@ -1,80 +1,66 @@
-import mido
+import argparse
 import logging
-import time
-import subprocess
+import sys
 
+from config.constants import SO_CATALOG
+from config.log_config import LogConfig
+from config.settings import Settings
+from core.midi_listener import MidiListener
+from handlers.pad_handler import PadHandler
+from services.command_service import CommandService
+from services.sequence_service import SequenceService
+from services.notification_service import NotificationService
 from exceptions.connection_failed import ConnectionFailedException
 
-from static.commands import MIDI_TO_COMMAND
-
-
 logger = logging.getLogger(__name__)
-logger.setLevel(logging.INFO)
 
 
-class KeyKorg:
-    device_name = "nanoPAD2:nanoPAD2 nanoPAD2 _ CTRL"
+def main() -> None:
+    parser = argparse.ArgumentParser(description="KeyKorg MIDI controller")
+    parser.add_argument("--so", required=True, choices=list(SO_CATALOG.keys()))
+    args = parser.parse_args()
 
-    def validate_connection(self) -> bool:
-        """
-        Valida que el MIDI está dentro de la lista de
-        dispositivos conectados
-        """
-        devices = [device for device in mido.get_input_names() if self.device_name in device]
+    try:
+        settings = Settings(args.so)
+    except (ValueError, FileNotFoundError) as ex:
+        print(f"Error: {ex}", file=sys.stderr)
+        sys.exit(1)
 
-        return any(devices)
+    LogConfig.setup(settings.log_level)
+    logger.info("Iniciando KeyKorg")
 
-    def wait_for_connection(self, retries = 3, delay = 2):
-        """
-        Realiza n intentos de conexión al dispositivo agregando
-        un tiempo de espera entre cada intento
-        Args:
-            retries: int, con la cantidad máxima de intentos
-            delay: int, con la cantidad de tiempo de espera
-        """
-        for _ in range(retries):
-            logger.info("conectando...")
-            if self.validate_connection():
-                return True
-            time.sleep(delay)
-        return False
+    notifier = NotificationService(settings.sounds_dir)
 
-    def listener(self):
-        """
-        Se mantiene escuchando los inputs del dispositivo conectado
-        """
-        active_notes = set()
-        with mido.open_input(self.device_name) as device:
-            logger.info("escuchando midi...")
-            for msg in device:
-                if msg.type == "note_on" and msg.velocity > 0:
-                    if not msg.note in active_notes:
-                        active_notes.add(msg.note)
-                        command = MIDI_TO_COMMAND.get(msg.note)
-                        if command:
-                            logger.info(f"ejecutando -> {command}")
-                            subprocess.Popen(command)
-                            logger.info("hecho")
-                elif msg.type == 'note_off' or (msg.type == 'note_on' and msg.velocity == 0):
-                    active_notes.discard(msg.note)
+    if settings.is_pending:
+        msg = f"SO '{settings.so}' aún no está soportado"
+        logger.warning(msg)
+        notifier.notify_alert("KeyKorg", msg)
 
-    def execute(self):
-        """
-        Ejecuta el script y se mantiene escuchando los mensajes del MIDI
-        """
-        try:
-            logger.info("Iniciando KeyKorg")
-            if not self.wait_for_connection():
-                raise ConnectionFailedException("No se encuentra el dispositivo")
-            self.listener()
+    try:
+        if not MidiListener.wait_for_connection(settings.midi_device):
+            raise ConnectionFailedException("No se encuentra el dispositivo")
 
-        except KeyboardInterrupt as key_ex:
-            logger.info(key_ex)
+        notifier.notify_success("KeyKorg conectado ✓")
 
-        except ConnectionFailedException as con_ex:
-            logger.error(f"connection -> {con_ex}")
+        handler = PadHandler(
+            pad_map=settings.load_pad_map(),
+            command_service=CommandService(),
+            sequence_service=SequenceService(),
+            notification_service=notifier,
+        )
 
-        except Exception as ex:
-            logger.error(f"general -> {ex}")
+        MidiListener(settings.midi_device, handler.handle).listen()
 
-KeyKorg().execute()
+    except KeyboardInterrupt:
+        logger.info("KeyKorg detenido por el usuario")
+
+    except ConnectionFailedException as ex:
+        logger.error(f"CONNECTION_FAIL | error={ex}")
+        notifier.notify_alert("No se pudo conectar a KeyKorg")
+
+    except Exception as ex:
+        logger.error(f"GENERAL_ERROR | error={type(ex).__name__}: {ex}")
+
+
+if __name__ == "__main__":
+    main()
