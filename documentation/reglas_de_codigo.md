@@ -55,29 +55,7 @@ Semántica de los 5 tipos — no intercambiar:
 
 ## Logging
 
-Formato obligatorio para todos los mensajes de log:
-
-```
-COMPONENTE_EVENTO | key=value | key=value
-```
-
-Ejemplos:
-```
-PAD_PRESS       | pad_id=37 | name='Chrome' | type=simple
-CMD_OK          | name='Chrome' | command='google-chrome'
-CMD_NOT_FOUND   | name='Postman' | command='...' | error=...
-CMD_FAIL        | name='App' | command='...' | error=TypeError: ...
-SEQ_OK          | name='Modo Dev'
-SEQ_FAIL        | name='Modo Dev' | error=RuntimeError: ...
-PAD_UNMAPPED    | pad_id=45
-CONNECTION_FAIL | error=No se encuentra el dispositivo
-GENERAL_ERROR   | error=TypeError: ...
-```
-
-Reglas:
-- Usar `logger = logging.getLogger(__name__)` al inicio de cada módulo
-- No llamar `logger.setLevel()` en los módulos — el nivel lo controla `LogConfig.setup()`
-- Strings con nombre de pad siempre con `!r` para que aparezcan entre comillas en el log
+Formato, catálogo de eventos y convenciones en [documentation/config/logging.md](config/logging.md).
 
 ---
 
@@ -94,24 +72,6 @@ Reglas:
 
 ---
 
-## YAML de comandos
+## YAML, scripts y sonidos
 
-- El archivo raíz `commands.{so}.yaml` solo contiene `imports:` — no define pads directamente
-- Los pads se definen en archivos de escenario dentro de `{so}/`, uno por categoría
-- Los archivos reales (`commands.{so}.yaml` y `{so}/*.yaml` directos) están en `.gitignore`
-- Los templates de referencia viven en `{so}/example/` y se versionan
-- El campo `name` es obligatorio — aparece en logs y notificaciones
-- El `pad_id` es la nota MIDI del dispositivo (entero)
-- Los comandos `simple` usan strings completos parseados con `shlex.split`
-- Los paths relativos en comandos se resuelven automáticamente contra `PROJECT_ROOT` en `Settings.load_pad_map()`
-- Las secuencias usan solo las acciones definidas: `open`, `close_all`, `notify`, `delay`, `shell`
-
----
-
-## Archivos de sonido
-
-- Viven en `src/static/sounds/`
-- La ruta se accede solo a través de `settings.sounds_dir`
-- Los 5 archivos esperados: `success.wav`, `done.wav`, `warning.wav`, `alert.wav`, `bye.wav`
-- Si un archivo no existe, `notification_service` loguea warning y continúa sin crashear
-- El volumen se controla desde `NotificationService(sounds_dir, volume=0.7)`
+Reglas de configuración de archivos en [documentation/config/yaml_y_scripts.md](config/yaml_y_scripts.md).

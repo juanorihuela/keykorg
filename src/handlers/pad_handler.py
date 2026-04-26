@@ -36,7 +36,11 @@ class PadHandler:
         success = self._dispatch(pad_type, pad_config, pad_name)
 
         if success:
-            self.notification_service.notify_done(pad_name)
+            self.notification_service.notify_done(
+                pad_name,
+                skip_notify=pad_config.get("skip_notify", False),
+                skip_sound=pad_config.get("skip_sound", False),
+            )
 
     def _dispatch(self, pad_type: str, pad_config: dict, pad_name: str) -> bool:
         if pad_type == "simple":

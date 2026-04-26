@@ -45,9 +45,7 @@ Internamente, `_resolve_paths()` recorre todos los pads y resuelve el primer tok
 
 ## `config/log_config.py` — clase `LogConfig`
 
-Configura el sistema de logging global con un solo método de clase: `LogConfig.setup(log_level)`.
-
-Crea dos handlers: archivo rotativo diario y consola. Se llama una sola vez en `main.py` antes de cualquier `logger.info/error`.
+Documentación completa en [documentation/config/logging.md](config/logging.md).
 
 ---
 
@@ -130,6 +128,12 @@ Los 5 tipos y su semántica:
 
 El reproductor de audio se detecta en `os_helpers.get_sound_player(volume)`. Orden de preferencia: `paplay` (soporta volumen), `afplay`, `aplay` (sin control de volumen por comando).
 
+Archivos de sonido:
+- Viven en `src/static/sounds/`
+- La ruta se accede solo a través de `settings.sounds_dir`
+- Si un archivo no existe, loguea warning y continúa sin crashear
+- El volumen se controla desde `NotificationService(sounds_dir, volume=0.7)`
+
 ---
 
 ## `helpers/os_helpers.py`
@@ -143,28 +147,4 @@ Dos funciones:
 
 ## `config/commands/`
 
-Organizado por SO. Cada SO tiene:
-- Un archivo raíz `commands.{so}.yaml` que solo lista imports
-- Un subdirectorio `{so}/` con un archivo YAML por escenario o categoría
-
-**Archivo raíz** (`commands.debian.yaml`):
-```yaml
-imports:
-  - debian/scene_1.yaml
-```
-
-**Archivo de escenario** (`debian/scene_1.yaml`):
-```yaml
-pads:
-  {pad_id: int}:
-    name: str          # nombre descriptivo, aparece en logs y notificaciones
-    type: simple | sequence
-    command: str       # solo si type=simple — parseado con shlex, paths resueltos automáticamente
-    steps: list        # solo si type=sequence
-```
-
-`Settings.load_pad_map()` carga el raíz, itera los imports y mergea todos los `pads` en un solo dict. Si no hay `imports:`, carga `pads:` directamente (compatibilidad con formato anterior).
-
-Los templates de referencia viven en `{so}/example/` y se versionan. Los archivos reales (`commands.{so}.yaml` y `{so}/*.yaml` directamente) están en `.gitignore`.
-
-Los `pad_id` son las notas MIDI del dispositivo. Para el nanoPAD2, los pads van del 36 al 51.
+Estructura y reglas de los archivos YAML de comandos en [documentation/config/yaml_y_scripts.md](config/yaml_y_scripts.md).

@@ -16,9 +16,18 @@ class NotificationService:
         self._notify(title, message)
         self._play_sound("success.wav")
 
-    def notify_done(self, title: str, message: str = "") -> None:
-        self._notify(title, message)
-        self._play_sound("done.wav")
+    def notify_done(
+        self,
+        title: str,
+        message: str = "",
+        *,
+        skip_notify: bool = False,
+        skip_sound: bool = False,
+    ) -> None:
+        if not skip_notify:
+            self._notify(title, message)
+        if not skip_sound:
+            self._play_sound("done.wav")
 
     def notify_warning(self, title: str, message: str = "") -> None:
         self._notify(title, message)

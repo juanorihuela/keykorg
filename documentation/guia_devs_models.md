@@ -11,110 +11,17 @@ El orden recomendado para entender el sistema:
 1. `documentation/arquitectura.md` — visión general y flujo de datos
 2. `documentation/piezas_clave.md` — qué hace cada clase
 3. `documentation/reglas_de_codigo.md` — convenciones a respetar
-4. `src/config/constants.py` — constantes del sistema
-5. `src/config/settings.py` — cómo se carga la configuración
-6. `src/main.py` — punto de entrada, flujo de arranque
-7. `src/config/commands/commands.debian.example.yaml` — template raíz (imports)
-8. `src/config/commands/debian/example/apps.example.yaml` — template de escenario
+4. `documentation/config/yaml_y_scripts.md` — configuración de pads, scripts y sonidos
+5. `documentation/config/logging.md` — sistema de logs, formato y convenciones
+6. `src/config/constants.py` — constantes del sistema
+7. `src/config/settings.py` — cómo se carga la configuración
+8. `src/main.py` — punto de entrada, flujo de arranque
+9. `src/config/commands/commands.debian.example.yaml` — template raíz (imports)
+10. `src/config/commands/debian/example/apps.example.yaml` — template de escenario
 
 ---
 
 ## Cómo integrar un cambio nuevo
-
-### Agregar un pad nuevo
-
-Editar el archivo de escenario correspondiente en `src/config/commands/debian/`. No tocar código Python.
-
-```yaml
-pads:
-  42:
-    name: "Mi App"
-    type: simple
-    command: "nombre-del-binario"
-```
-
-Para secuencias:
-
-```yaml
-pads:
-  43:
-    name: "Mi Secuencia"
-    type: sequence
-    steps:
-      - action: open
-        app: "gnome-terminal"
-      - action: delay
-        seconds: 1
-      - action: shell
-        command: "mi-comando"
-```
-
-Los paths relativos (ej: `src/static/scripts/mi_script.sh`) se resuelven automáticamente a absolutos en `Settings.load_pad_map()`.
-
----
-
-### Agregar un escenario nuevo
-
-**Paso 1** — Crear el archivo de escenario en `src/config/commands/debian/mi_escenario.yaml`:
-
-```yaml
-pads:
-  50:
-    name: "Mi App"
-    type: simple
-    command: "mi-app"
-```
-
-**Paso 2** — Registrarlo en el archivo raíz `commands.debian.yaml`:
-
-```yaml
-imports:
-  - debian/apps.yaml
-  - debian/dev.yaml
-  - debian/mi_escenario.yaml   # nuevo
-```
-
-El archivo de escenario es personal y queda ignorado por `.gitignore`. Si querés que otros lo usen como referencia, creá el equivalente en `debian/example/mi_escenario.example.yaml` — ese sí se versiona.
-
----
-
-### Agregar un script nuevo
-
-Cada comando que requiera un script de shell tiene su propio archivo `.sh` en `src/static/scripts/`.
-
-**Paso 1** — Crear `src/static/scripts/mi_script.sh` basándose en `scripts/examples/script.example.sh`:
-
-```bash
-#!/bin/bash
-sleep 0.3
-xdotool type "mi-comando"
-sleep 0.3
-xdotool key Return
-```
-
-**Paso 2** — Darle permisos de ejecución:
-
-```bash
-chmod +x src/static/scripts/mi_script.sh
-```
-
-**Paso 3** — Referenciarlo en el YAML con path relativo:
-
-```yaml
-pads:
-  44:
-    name: "Mi Script"
-    type: sequence
-    steps:
-      - action: shell
-        command: "src/static/scripts/mi_script.sh"
-```
-
-El path se resuelve automáticamente. No hardcodear el path absoluto en el YAML.
-
-Los scripts personales están en `.gitignore` (`src/static/scripts/*`). El directorio `scripts/examples/` sí se versiona.
-
----
 
 ### Agregar una acción nueva a secuencias
 
@@ -213,18 +120,7 @@ from config.constants import MI_CONSTANTE
 
 ### Logging en cada módulo
 
-```python
-import logging
-logger = logging.getLogger(__name__)
-```
-
-Nunca llamar `logger.setLevel()` en los módulos.
-
-Formato de mensajes:
-```python
-logger.info(f"EVENTO | pad_id={event.pad_id} | name={pad_name!r}")
-logger.error(f"EVENTO_FAIL | error={type(ex).__name__}: {ex}")
-```
+Ver [documentation/config/logging.md](config/logging.md) — convenciones, formato y catálogo de eventos.
 
 ### Manejo de errores en services
 

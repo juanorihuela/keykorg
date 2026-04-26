@@ -140,8 +140,4 @@ El catálogo de SOs disponibles vive en `src/config/constants.py` (`SO_CATALOG`)
 
 ## Logging
 
-- Directorio `logs/` en la raíz, generado en runtime
-- Un archivo por día: `keykorg_YYYY-MM-DD.log`
-- Formato: `2026-04-26 14:32:01 | INFO  | COMPONENTE_EVENTO | key=value`
-- Nivel configurable desde `.env` con `LOG_LEVEL`
-- Configurado en `LogConfig.setup()` antes de cualquier otra operación
+Documentación completa en [documentation/config/logging.md](config/logging.md).
