@@ -10,19 +10,21 @@ KeyKorg es un controlador MIDI por software. Escucha eventos de un dispositivo M
 
 ```
 keykorg/
-├── .env.debian                        # Config de entorno para distros Debian-based
+├── .env.debian                      # Config de entorno para distros Debian-based
 ├── .env.macos                       # Config de entorno para macOS (pending)
 ├── requirements.txt
-├── explicacion.md                   # Flujo paso a paso del programa
-├── documentacion/                   # Esta carpeta
+├── documentation/                   # Esta carpeta
 └── src/
     ├── main.py                      # Punto de entrada — solo orquestación
     ├── config/
     │   ├── constants.py             # Todas las constantes del sistema
     │   ├── log_config.py            # Clase LogConfig — setup de logging
     │   ├── settings.py              # Clase Settings — carga .env + validaciones
-    │   ├── commands.debian.yaml       # Mapeo de pads para Linux
-    │   └── commands.macos.yaml      # Mapeo de pads para macOS (placeholder)
+    │   └── commands/
+    │       ├── commands.debian.yaml         # Mapeo de pads para Debian (gitignored)
+    │       ├── commands.macos.yaml          # Mapeo de pads para macOS (gitignored)
+    │       ├── commands.debian.example.yaml # Template de referencia para Debian
+    │       └── commands.macos.example.yaml  # Template de referencia para macOS
     ├── core/
     │   └── midi_listener.py         # Escucha el dispositivo MIDI, emite PadEvents
     ├── dtos/
@@ -39,13 +41,14 @@ keykorg/
     │   └── connection_failed.py     # Excepción de conexión MIDI fallida
     └── static/
         ├── sounds/
-        │   ├── success.wav
-        │   ├── done.wav
-        │   ├── warning.wav
-        │   └── alert.wav
+        │   ├── success.wav          # Procesos importantes del sistema
+        │   ├── done.wav             # Acción de pad completada
+        │   ├── warning.wav          # Alertas no críticas
+        │   ├── alert.wav            # Errores críticos
+        │   └── bye.wav              # Cierre del programa
         └── scripts/
-            ├── code_here.sh
-            └── react_localhost.sh
+            ├── script.example.sh        # Template de referencia (versionado)
+            └── *.sh                     # Scripts personales (gitignored)
 ```
 
 ---
@@ -92,11 +95,20 @@ MidiListener.listen()  ◄──── bucle infinito
     ▼
 PadHandler.handle()
     │
+    ├── pad no mapeado ──► notify_warning
+    │
     ├── type=simple   ──► CommandService.execute()
+    │                         ├── éxito:           notify_done
+    │                         ├── cmd no encontrado: notify_warning
+    │                         └── error:            notify_alert
+    │
     └── type=sequence ──► SequenceService.execute()
-                                │
-                         éxito: notify_done()
-                         error:  notify_alert()
+                              ├── éxito:  notify_done
+                              └── error:  notify_alert
+
+KeyboardInterrupt ──► notify_bye
+ConnectionFailed  ──► notify_alert
+Exception general ──► notify_alert
 ```
 
 ---
@@ -105,7 +117,8 @@ PadHandler.handle()
 
 Cada SO tiene:
 - Un archivo `.env.{so}` en la raíz del proyecto con rutas y parámetros del sistema
-- Un archivo `src/config/commands.{so}.yaml` con el mapeo de pads
+- Un archivo `src/config/commands/commands.{so}.yaml` con el mapeo de pads (gitignored)
+- Un archivo `src/config/commands/commands.{so}.example.yaml` como template de referencia
 
 `Settings` es el único punto de acceso a estos valores. Ningún otro módulo lee `.env` ni `os.environ` directamente.
 

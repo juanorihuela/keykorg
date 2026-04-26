@@ -8,13 +8,13 @@ Esta guía explica cómo leer el proyecto y cómo integrar cambios nuevos siguie
 
 El orden recomendado para entender el sistema:
 
-1. `documentacion/arquitectura.md` — visión general y flujo de datos
-2. `documentacion/piezas_clave.md` — qué hace cada clase
-3. `documentacion/reglas_de_codigo.md` — convenciones a respetar
+1. `documentation/arquitectura.md` — visión general y flujo de datos
+2. `documentation/piezas_clave.md` — qué hace cada clase
+3. `documentation/reglas_de_codigo.md` — convenciones a respetar
 4. `src/config/constants.py` — constantes del sistema
 5. `src/config/settings.py` — cómo se carga la configuración
 6. `src/main.py` — punto de entrada, flujo de arranque
-7. `src/config/commands.debian.yaml` — ejemplo de mapeo de pads
+7. `src/config/commands/commands.debian.example.yaml` — template de mapeo de pads
 
 ---
 
@@ -22,7 +22,7 @@ El orden recomendado para entender el sistema:
 
 ### Agregar un pad nuevo
 
-Editar solo `src/config/commands.debian.yaml`. No tocar código Python.
+Editar solo `src/config/commands/commands.debian.yaml`. No tocar código Python.
 
 ```yaml
 pads:
@@ -47,6 +47,46 @@ pads:
       - action: shell
         command: "mi-comando"
 ```
+
+Los paths relativos (ej: `src/static/scripts/mi_script.sh`) se resuelven automáticamente a absolutos en `Settings.load_pad_map()`.
+
+---
+
+### Agregar un script nuevo
+
+Cada comando que requiera un script de shell tiene su propio archivo `.sh` en `src/static/scripts/`.
+
+**Paso 1** — Crear `src/static/scripts/mi_script.sh` basándose en `script.example.sh`:
+
+```bash
+#!/bin/bash
+sleep 0.3
+xdotool type "mi-comando"
+sleep 0.3
+xdotool key Return
+```
+
+**Paso 2** — Darle permisos de ejecución:
+
+```bash
+chmod +x src/static/scripts/mi_script.sh
+```
+
+**Paso 3** — Referenciarlo en el YAML con path relativo:
+
+```yaml
+pads:
+  44:
+    name: "Mi Script"
+    type: sequence
+    steps:
+      - action: shell
+        command: "src/static/scripts/mi_script.sh"
+```
+
+El path se resuelve automáticamente. No hardcodear el path absoluto en el YAML.
+
+Los scripts personales están en `.gitignore` (`src/static/scripts/*`). Solo `script.example.sh` se versiona.
 
 ---
 
@@ -92,11 +132,13 @@ _HOST_SO_MAP = {
 SO=windows
 MIDI_DEVICE=nanoPAD2
 SOUNDS_DIR=src/static/sounds
-COMMANDS_FILE=src/config/commands.windows.yaml
+COMMANDS_FILE=src/config/commands/commands.windows.yaml
 LOG_LEVEL=INFO
 ```
 
-**Paso 4** — Crear `src/config/commands.windows.yaml` con los pads del SO.
+**Paso 4** — Crear `src/config/commands/commands.windows.yaml` y `commands.windows.example.yaml`.
+
+**Paso 5** — Agregar `src/config/commands/commands.windows.yaml` al `.gitignore`.
 
 Cuando el SO esté listo para producción, cambiar su estado en `SO_CATALOG` de `"pending"` a `"active"`.
 
@@ -114,7 +156,7 @@ def notify_info(self, title: str, message: str = "") -> None:
 
 **Paso 2** — Agregar `src/static/sounds/info.wav`
 
-**Paso 3** — Usar el nuevo método desde `pad_handler.py` o `main.py` según corresponda.
+**Paso 3** — Usar el nuevo método desde el componente que corresponda.
 
 ---
 
@@ -135,8 +177,9 @@ from config.constants import MI_CONSTANTE
 ### Agregar un servicio nuevo
 
 1. Crear `src/services/mi_servicio.py` con una clase `MiServicio`
-2. Instanciar en `main.py` y pasar como dependencia a `PadHandler` (o al componente que lo necesite)
-3. No instanciar servicios dentro de otros servicios — la inyección ocurre en `main.py`
+2. Si el servicio puede fallar, recibir `NotificationService` en el constructor y notificar desde adentro
+3. Instanciar en `main.py` y pasar como dependencia al componente que lo necesite
+4. No instanciar servicios dentro de otros servicios — la inyección ocurre en `main.py`
 
 ---
 
@@ -166,10 +209,12 @@ def execute(self, ...) -> bool:
         logger.info(f"EVENTO_OK | ...")
         return True
     except EspecificException as ex:
-        logger.error(f"EVENTO_FAIL | ... | error=EspecificException: {ex}")
+        logger.warning(f"EVENTO_WARN | ... | error={ex}")
+        self.notification_service.notify_warning(pad_name, "mensaje")
         return False
     except Exception as ex:
         logger.error(f"EVENTO_FAIL | ... | error={type(ex).__name__}: {ex}")
+        self.notification_service.notify_alert(pad_name, "mensaje")
         return False
 ```
 
@@ -193,8 +238,10 @@ sound_path = Path("src/static/sounds/archivo.wav")
 - No crear dependencias circulares entre capas
 - No hardcodear el nombre del dispositivo MIDI — viene del `.env`
 - No usar `notify_success` para acciones rutinarias — para eso existe `notify_done`
+- No llamar `notify_alert` desde `PadHandler` en caso de fallo — el service ya lo hizo
 - No crear archivos de más de 300 líneas
 - No instanciar servicios dentro de otros servicios
+- No versionar `commands.{so}.yaml` — son personales y van en `.gitignore`
 
 ---
 
@@ -202,7 +249,8 @@ sound_path = Path("src/static/sounds/archivo.wav")
 
 1. ¿La clase nueva tiene una sola responsabilidad?
 2. ¿Los paths usan `settings` como fuente de verdad?
-3. ¿Los errores están capturados con un mensaje descriptivo?
+3. ¿Los errores están capturados con mensaje descriptivo y notificación apropiada?
 4. ¿El logging sigue el formato `EVENTO | key=value`?
 5. ¿Las constantes nuevas están en `constants.py`?
 6. ¿`main.py` sigue siendo solo orquestación?
+7. ¿Los services nuevos reciben `NotificationService` si pueden fallar?
