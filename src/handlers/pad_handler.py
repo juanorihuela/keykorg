@@ -35,7 +35,7 @@ class PadHandler:
         success = self._dispatch(pad_type, pad_config, pad_name)
 
         if success:
-            self.notification_service.notify_success(pad_name)
+            self.notification_service.notify_done(pad_name)
         else:
             self.notification_service.notify_alert(pad_name, "Error al ejecutar")
 

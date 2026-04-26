@@ -33,8 +33,9 @@ def main() -> None:
 
     if settings.is_pending:
         msg = f"SO '{settings.so}' aún no está soportado"
-        logger.warning(msg)
+        logger.error(msg)
         notifier.notify_alert("KeyKorg", msg)
+        sys.exit(1)
 
     try:
         if not MidiListener.wait_for_connection(settings.midi_device):

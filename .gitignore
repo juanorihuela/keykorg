@@ -1,10 +1,18 @@
+# entorno virtual
 .venv
 
+# cache python
 .pyc
 __pycache__
 
+# specs
 specs
 
+# envs
 .env.macos
 .env.mint
+
+# log
+logs
+.log
 
