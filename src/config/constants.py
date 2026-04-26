@@ -1,5 +1,5 @@
 SO_CATALOG: dict[str, str] = {
-    "mint": "active",
+    "debian": "active",
     "macos": "pending",
 }
 

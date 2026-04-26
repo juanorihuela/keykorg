@@ -1,3 +1,4 @@
+import shlex
 import yaml
 from pathlib import Path
 from dotenv import dotenv_values
@@ -25,9 +26,39 @@ class Settings:
         self.log_level: str = values.get("LOG_LEVEL", "INFO")
 
     def load_pad_map(self) -> dict:
-        with open(self.commands_file, "r") as f:
-            data = yaml.safe_load(f)
-        return data.get("pads", {})
+        try:
+            with open(self.commands_file, "r") as f:
+                data = yaml.safe_load(f)
+            pad_map = data.get("pads", {})
+            return self._resolve_paths(pad_map)
+        except FileNotFoundError:
+            raise FileNotFoundError(f"Archivo de comandos '{self.commands_file}' no encontrado")
+        except yaml.YAMLError as ex:
+            raise ValueError(f"YAML malformado en '{self.commands_file}': {ex}")
+
+    def _resolve_paths(self, pad_map: dict) -> dict:
+        for pad_config in pad_map.values():
+            pad_type = pad_config.get("type")
+            if pad_type == "simple":
+                pad_config["command"] = self._resolve_cmd(pad_config.get("command", ""))
+            elif pad_type == "sequence":
+                for step in pad_config.get("steps", []):
+                    action = step.get("action")
+                    if action == "open":
+                        step["app"] = self._resolve_cmd(step.get("app", ""))
+                    elif action == "shell":
+                        step["command"] = self._resolve_cmd(step.get("command", ""))
+        return pad_map
+
+    def _resolve_cmd(self, command: str) -> str:
+        tokens = shlex.split(command)
+        if not tokens:
+            return command
+        candidate = PROJECT_ROOT / tokens[0]
+        if candidate.is_file():
+            tokens[0] = str(candidate)
+            return shlex.join(tokens)
+        return command
 
     def _validate_so(self, so: str) -> None:
         if so not in SO_CATALOG:

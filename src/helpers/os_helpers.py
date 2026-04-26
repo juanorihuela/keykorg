@@ -2,7 +2,7 @@ import platform
 import shutil
 
 _HOST_SO_MAP = {
-    "linux": "mint",
+    "linux": "debian",
     "darwin": "macos",
 }
 

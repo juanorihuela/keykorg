@@ -14,7 +14,7 @@ El orden recomendado para entender el sistema:
 4. `src/config/constants.py` — constantes del sistema
 5. `src/config/settings.py` — cómo se carga la configuración
 6. `src/main.py` — punto de entrada, flujo de arranque
-7. `src/config/commands.mint.yaml` — ejemplo de mapeo de pads
+7. `src/config/commands.debian.yaml` — ejemplo de mapeo de pads
 
 ---
 
@@ -22,7 +22,7 @@ El orden recomendado para entender el sistema:
 
 ### Agregar un pad nuevo
 
-Editar solo `src/config/commands.mint.yaml`. No tocar código Python.
+Editar solo `src/config/commands.debian.yaml`. No tocar código Python.
 
 ```yaml
 pads:
@@ -70,7 +70,7 @@ No modificar `pad_handler.py` ni `command_service.py`.
 
 ```python
 SO_CATALOG = {
-    "mint": "active",
+    "debian": "active",
     "macos": "pending",
     "windows": "pending",  # nuevo
 }
@@ -80,7 +80,7 @@ SO_CATALOG = {
 
 ```python
 _HOST_SO_MAP = {
-    "linux": "mint",
+    "linux": "debian",
     "darwin": "macos",
     "windows": "windows",  # nuevo
 }

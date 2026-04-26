@@ -10,7 +10,7 @@ KeyKorg es un controlador MIDI por software. Escucha eventos de un dispositivo M
 
 ```
 keykorg/
-├── .env.mint                        # Config de entorno para Linux Mint
+├── .env.debian                        # Config de entorno para distros Debian-based
 ├── .env.macos                       # Config de entorno para macOS (pending)
 ├── requirements.txt
 ├── explicacion.md                   # Flujo paso a paso del programa
@@ -21,7 +21,7 @@ keykorg/
     │   ├── constants.py             # Todas las constantes del sistema
     │   ├── log_config.py            # Clase LogConfig — setup de logging
     │   ├── settings.py              # Clase Settings — carga .env + validaciones
-    │   ├── commands.mint.yaml       # Mapeo de pads para Linux Mint
+    │   ├── commands.debian.yaml       # Mapeo de pads para Linux
     │   └── commands.macos.yaml      # Mapeo de pads para macOS (placeholder)
     ├── core/
     │   └── midi_listener.py         # Escucha el dispositivo MIDI, emite PadEvents
@@ -77,7 +77,7 @@ keykorg/
 ## Flujo de datos
 
 ```
-.env.mint
+.env.debian
     │
     ▼
 Settings ──► LogConfig.setup()

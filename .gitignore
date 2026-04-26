@@ -10,7 +10,7 @@ specs
 
 # envs
 .env.macos
-.env.mint
+.env.debian
 
 # log
 logs
