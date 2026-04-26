@@ -12,6 +12,10 @@ specs
 .env.macos
 .env.debian
 
+# commands
+commands.debian.yaml
+commands.macos.yaml
+
 # log
 logs
 .log
