@@ -96,8 +96,10 @@ Reglas:
 
 ## YAML de comandos
 
-- Los archivos reales van en `src/config/commands/` y están en `.gitignore`
-- Los archivos `.example.yaml` son los templates versionados
+- El archivo raíz `commands.{so}.yaml` solo contiene `imports:` — no define pads directamente
+- Los pads se definen en archivos de escenario dentro de `{so}/`, uno por categoría
+- Los archivos reales (`commands.{so}.yaml` y `{so}/*.yaml` directos) están en `.gitignore`
+- Los templates de referencia viven en `{so}/example/` y se versionan
 - El campo `name` es obligatorio — aparece en logs y notificaciones
 - El `pad_id` es la nota MIDI del dispositivo (entero)
 - Los comandos `simple` usan strings completos parseados con `shlex.split`

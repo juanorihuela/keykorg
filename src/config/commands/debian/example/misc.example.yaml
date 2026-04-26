@@ -1,0 +1,31 @@
+# ==============================================================================
+# ESCENARIO: Voz & Misc
+# ==============================================================================
+#
+# Escenario para utilidades sueltas que no encajan en otra categoría.
+# Tener un archivo "misc" evita contaminar otros escenarios con pads de uso
+# esporádico. Si misc crece demasiado, conviene dividirlo en su propio tema.
+#
+# ──────────────────────────────────────────────────────────────────────────────
+# NOTA sobre pad_id:
+#   Los pad_id son las notas MIDI del dispositivo. Para el nanoPAD2 van del 36
+#   al 51 (16 pads en total). Cada id tiene que ser único en todos los escenarios
+#   — si dos archivos definen el mismo id, el último importado lo sobreescribe.
+# ==============================================================================
+
+pads:
+
+  44:
+    name: "Captura de pantalla"
+    type: simple
+    command: "gnome-screenshot -i"   # -i abre el selector de área interactivo
+
+  45:
+    name: "Grabador de voz"
+    type: simple
+    command: "gnome-sound-recorder"
+
+  46:
+    name: "Calculadora"
+    type: simple
+    command: "gnome-calculator"

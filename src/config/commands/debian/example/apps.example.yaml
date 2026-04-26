@@ -1,0 +1,87 @@
+# ==============================================================================
+# ESCENARIO: Apps & Sistema
+# ==============================================================================
+#
+# ¿Para qué sirven los escenarios?
+#   Cada archivo agrupa pads por familia o funcionalidad. En lugar de tener
+#   un solo YAML de 400 líneas, cada escenario tiene su tema: apps del día a día,
+#   herramientas dev, sistema, modos de trabajo, etc. Más fácil de leer,
+#   modificar y mantener.
+#
+# ¿Cómo se carga?
+#   El archivo raíz commands.debian.yaml lista los escenarios en "imports:".
+#   Settings.load_pad_map() los carga todos y mergea los pads en un solo dict.
+#
+# ──────────────────────────────────────────────────────────────────────────────
+# TIPO SIMPLE
+#   Ejecuta un único comando de sistema. Equivale a correrlo en la terminal.
+#   El binario tiene que estar en el PATH o ser un path absoluto.
+#
+#   pad_id:
+#     name: "Nombre visible en notificación y log"
+#     type: simple
+#     command: "binario --flags opcionales"
+#
+# TIPO SEQUENCE
+#   Ejecuta una lista de pasos en orden. Útil para flujos de varias acciones.
+#   Acciones disponibles:
+#     open      → abre una app o comando        (campo: app)
+#     close_all → cierra todas las ventanas abiertas
+#     notify    → notificación de SO sin sonido  (campo: message)
+#     delay     → espera N segundos              (campo: seconds)
+#     shell     → ejecuta un script o comando    (campo: command)
+#
+#   pad_id:
+#     name: "Nombre"
+#     type: sequence
+#     steps:
+#       - action: close_all
+#       - action: open
+#         app: "mi-app"
+#       - action: delay
+#         seconds: 1
+#       - action: notify
+#         message: "Listo"
+# ==============================================================================
+
+pads:
+
+  # --- Tipo simple: abre una app directamente ---
+
+  36:
+    name: "Terminal"
+    type: simple
+    command: "gnome-terminal"
+
+  37:
+    name: "Navegador"
+    type: simple
+    command: "google-chrome"
+
+  38:
+    name: "Música"
+    type: simple
+    command: "spotify"
+
+  # --- Tipo simple: comandos de sistema con flags ---
+
+  39:
+    name: "Bloquear pantalla"
+    type: simple
+    command: "xdotool key ctrl+alt+l"   # simula atajo de teclado
+
+  # --- Tipo sequence: flujo de varias acciones ---
+
+  40:
+    name: "Modo trabajo"
+    type: sequence
+    steps:
+      - action: close_all               # limpia el escritorio primero
+      - action: open
+        app: "gnome-terminal"
+      - action: delay
+        seconds: 1                      # espera a que abra antes del siguiente paso
+      - action: open
+        app: "code ."
+      - action: notify
+        message: "Modo trabajo activado"

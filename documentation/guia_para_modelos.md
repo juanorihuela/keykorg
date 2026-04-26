@@ -14,7 +14,8 @@ El orden recomendado para entender el sistema:
 4. `src/config/constants.py` — constantes del sistema
 5. `src/config/settings.py` — cómo se carga la configuración
 6. `src/main.py` — punto de entrada, flujo de arranque
-7. `src/config/commands/commands.debian.example.yaml` — template de mapeo de pads
+7. `src/config/commands/commands.debian.example.yaml` — template raíz (imports)
+8. `src/config/commands/debian/example/apps.example.yaml` — template de escenario
 
 ---
 
@@ -22,7 +23,7 @@ El orden recomendado para entender el sistema:
 
 ### Agregar un pad nuevo
 
-Editar solo `src/config/commands/commands.debian.yaml`. No tocar código Python.
+Editar el archivo de escenario correspondiente en `src/config/commands/debian/`. No tocar código Python.
 
 ```yaml
 pads:
@@ -52,11 +53,36 @@ Los paths relativos (ej: `src/static/scripts/mi_script.sh`) se resuelven automá
 
 ---
 
+### Agregar un escenario nuevo
+
+**Paso 1** — Crear el archivo de escenario en `src/config/commands/debian/mi_escenario.yaml`:
+
+```yaml
+pads:
+  50:
+    name: "Mi App"
+    type: simple
+    command: "mi-app"
+```
+
+**Paso 2** — Registrarlo en el archivo raíz `commands.debian.yaml`:
+
+```yaml
+imports:
+  - debian/apps.yaml
+  - debian/dev.yaml
+  - debian/mi_escenario.yaml   # nuevo
+```
+
+El archivo de escenario es personal y queda ignorado por `.gitignore`. Si querés que otros lo usen como referencia, creá el equivalente en `debian/example/mi_escenario.example.yaml` — ese sí se versiona.
+
+---
+
 ### Agregar un script nuevo
 
 Cada comando que requiera un script de shell tiene su propio archivo `.sh` en `src/static/scripts/`.
 
-**Paso 1** — Crear `src/static/scripts/mi_script.sh` basándose en `script.example.sh`:
+**Paso 1** — Crear `src/static/scripts/mi_script.sh` basándose en `scripts/examples/script.example.sh`:
 
 ```bash
 #!/bin/bash
@@ -86,7 +112,7 @@ pads:
 
 El path se resuelve automáticamente. No hardcodear el path absoluto en el YAML.
 
-Los scripts personales están en `.gitignore` (`src/static/scripts/*`). Solo `script.example.sh` se versiona.
+Los scripts personales están en `.gitignore` (`src/static/scripts/*`). El directorio `scripts/examples/` sí se versiona.
 
 ---
 

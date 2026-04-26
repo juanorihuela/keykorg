@@ -1,50 +1,15 @@
-pads:
-  # --- Tipo simple: ejecuta un comando de sistema ---
+# Archivo raíz de comandos para Debian.
+# Solo lista los archivos a importar — no define pads directamente.
+# Cada archivo en debian/ agrupa pads por categoría.
+#
+# Para crear tu configuración real:
+#   1. Copia este archivo como commands.debian.yaml
+#   2. Crea tus archivos de escenario en debian/ (sin .example en el nombre)
+#   3. Ajusta la lista de imports según los archivos que uses
+#
+# Ver ejemplos de escenarios en debian/commands_example/
 
-  36:
-    name: "Terminal"
-    type: simple
-    command: "gnome-terminal"
-
-  37:
-    name: "Navegador"
-    type: simple
-    command: "google-chrome"
-
-  38:
-    name: "Música"
-    type: simple
-    command: "spotify"
-
-  39:
-    name: "Bloquear pantalla"
-    type: simple
-    command: "xdotool key ctrl+alt+l"
-
-  # --- Tipo sequence: ejecuta pasos en orden ---
-
-  # Acciones disponibles:
-  #   open      → abre una app o comando  (campo: app)
-  #   close_all → cierra todas las ventanas abiertas
-  #   notify    → notificación de SO sin sonido  (campo: message)
-  #   delay     → espera N segundos  (campo: seconds)
-  #   shell     → ejecuta un comando arbitrario  (campo: command)
-
-  40:
-    name: "Modo trabajo"
-    type: sequence
-    steps:
-      - action: close_all
-      - action: open
-        app: "gnome-terminal"
-      - action: delay
-        seconds: 1
-      - action: open
-        app: "code ."
-      - action: notify
-        message: "Modo trabajo activado"
-
-  41:
-    name: "Script local"
-    type: simple
-    command: "src/static/scripts/mi_script.sh"
+imports:
+  - debian/apps.yaml
+  - debian/sistema.yaml
+  - debian/modos.yaml

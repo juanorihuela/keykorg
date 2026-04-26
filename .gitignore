@@ -12,13 +12,17 @@ specs
 .env.macos
 .env.debian
 
-# commands
+# commands — raíz
 commands.debian.yaml
 commands.macos.yaml
 
+# commands — escenarios personales (example/ sí se versiona)
+src/config/commands/debian/*.yaml
+src/config/commands/macos/*.yaml
+
 # scripts
 src/static/scripts/*
-!src/static/scripts/script.example.sh
+!src/static/scripts/examples/
 
 # log
 logs

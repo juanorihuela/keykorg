@@ -1,0 +1,71 @@
+# ==============================================================================
+# ESCENARIO: Apps & Sistema (macOS)
+# ==============================================================================
+#
+# ¿Para qué sirven los escenarios?
+#   Cada archivo agrupa pads por familia o funcionalidad. En lugar de tener
+#   un solo YAML de 400 líneas, cada escenario tiene su tema: apps del día a día,
+#   herramientas dev, sistema, modos de trabajo, etc. Más fácil de leer,
+#   modificar y mantener.
+#
+# ──────────────────────────────────────────────────────────────────────────────
+# TIPO SIMPLE
+#   Ejecuta un único comando. En macOS se usa "open -a NombreApp" para abrir
+#   aplicaciones del sistema o del App Store.
+#
+#   pad_id:
+#     name: "Nombre visible en notificación y log"
+#     type: simple
+#     command: "open -a NombreApp"
+#
+# TIPO SEQUENCE
+#   Ejecuta una lista de pasos en orden. Útil para flujos de varias acciones.
+#   Acciones disponibles:
+#     open      → abre una app o comando        (campo: app)
+#     close_all → cierra todas las ventanas abiertas
+#     notify    → notificación de SO sin sonido  (campo: message)
+#     delay     → espera N segundos              (campo: seconds)
+#     shell     → ejecuta un script o comando    (campo: command)
+# ==============================================================================
+
+pads:
+
+  # --- Tipo simple: abre apps con "open -a" ---
+
+  36:
+    name: "Terminal"
+    type: simple
+    command: "open -a Terminal"
+
+  37:
+    name: "Navegador"
+    type: simple
+    command: "open -a 'Google Chrome'"   # comillas si el nombre tiene espacios
+
+  38:
+    name: "Música"
+    type: simple
+    command: "open -a Spotify"
+
+  # --- Tipo simple: comando de sistema nativo ---
+
+  39:
+    name: "Bloquear pantalla"
+    type: simple
+    command: "pmset displaysleepnow"     # apaga la pantalla inmediatamente
+
+  # --- Tipo sequence: flujo de varias acciones ---
+
+  40:
+    name: "Modo trabajo"
+    type: sequence
+    steps:
+      - action: close_all               # limpia el escritorio primero
+      - action: open
+        app: "open -a Terminal"
+      - action: delay
+        seconds: 1                      # espera a que abra antes del siguiente paso
+      - action: open
+        app: "open -a 'Visual Studio Code'"
+      - action: notify
+        message: "Modo trabajo activado"

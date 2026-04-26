@@ -28,13 +28,25 @@ class Settings:
     def load_pad_map(self) -> dict:
         try:
             with open(self.commands_file, "r") as f:
-                data = yaml.safe_load(f)
-            pad_map = data.get("pads", {})
+                root = yaml.safe_load(f)
+
+            imports = root.get("imports", [])
+            if imports:
+                pad_map = {}
+                commands_dir = self.commands_file.parent
+                for rel_path in imports:
+                    file_path = commands_dir / rel_path
+                    with open(file_path, "r") as f:
+                        data = yaml.safe_load(f)
+                    pad_map.update(data.get("pads", {}))
+            else:
+                pad_map = root.get("pads", {})
+
             return self._resolve_paths(pad_map)
-        except FileNotFoundError:
-            raise FileNotFoundError(f"Archivo de comandos '{self.commands_file}' no encontrado")
+        except FileNotFoundError as ex:
+            raise FileNotFoundError(f"Archivo de comandos no encontrado: {ex.filename}")
         except yaml.YAMLError as ex:
-            raise ValueError(f"YAML malformado en '{self.commands_file}': {ex}")
+            raise ValueError(f"YAML malformado: {ex}")
 
     def _resolve_paths(self, pad_map: dict) -> dict:
         for pad_config in pad_map.values():

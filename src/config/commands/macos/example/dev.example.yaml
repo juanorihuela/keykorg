@@ -1,0 +1,52 @@
+# ==============================================================================
+# ESCENARIO: Dev Tools (macOS)
+# ==============================================================================
+#
+# Agrupa todos los pads relacionados a herramientas de desarrollo.
+# Separar este escenario de "apps" permite activar o desactivar este archivo
+# desde el raíz sin tocar el resto de la configuración.
+#
+# ──────────────────────────────────────────────────────────────────────────────
+# SCRIPTS DE SHELL (action: shell)
+#   Cuando un pad necesita escribir en terminal, ejecutar comandos encadenados
+#   o hacer algo que un binario solo no puede, se usa un script .sh propio.
+#
+#   Cómo referenciarlos:
+#     command: "src/static/scripts/mi_script.sh"
+#
+#   El path relativo se resuelve automáticamente contra PROJECT_ROOT.
+#   No hace falta hardcodear el path absoluto.
+#
+#   Para crear un script nuevo ver: src/static/scripts/examples/script.example.sh
+# ==============================================================================
+
+pads:
+
+  # --- Script como command directo (type: simple) ---
+  # Útil cuando el script no necesita contexto de secuencia.
+
+  41:
+    name: "VS Code aquí"
+    type: simple
+    command: "src/static/scripts/code_here.sh"   # escribe "code ." + Enter en la terminal
+
+  # --- Script dentro de una secuencia (action: shell) ---
+  # Permite combinar apertura de apps con ejecución de scripts.
+
+  42:
+    name: "React dev"
+    type: sequence
+    steps:
+      - action: open
+        app: "open -a Terminal"
+      - action: delay
+        seconds: 0.5                              # espera a que la terminal tenga foco
+      - action: shell
+        command: "src/static/scripts/react_localhost.sh"  # escribe "yarn dev" + Enter
+
+  # --- Tipo simple: app de terceros en macOS ---
+
+  43:
+    name: "Postman"
+    type: simple
+    command: "open -a Postman"

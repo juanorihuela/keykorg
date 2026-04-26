@@ -143,8 +143,17 @@ Dos funciones:
 
 ## `config/commands/`
 
-Contiene los YAMLs de mapeo de pads. Estructura de cada archivo:
+Organizado por SO. Cada SO tiene:
+- Un archivo raíz `commands.{so}.yaml` que solo lista imports
+- Un subdirectorio `{so}/` con un archivo YAML por escenario o categoría
 
+**Archivo raíz** (`commands.debian.yaml`):
+```yaml
+imports:
+  - debian/scene_1.yaml
+```
+
+**Archivo de escenario** (`debian/scene_1.yaml`):
 ```yaml
 pads:
   {pad_id: int}:
@@ -154,6 +163,8 @@ pads:
     steps: list        # solo si type=sequence
 ```
 
-Los archivos `*.example.yaml` son templates versionados. Los archivos reales (`commands.debian.yaml`, `commands.macos.yaml`) están en `.gitignore`.
+`Settings.load_pad_map()` carga el raíz, itera los imports y mergea todos los `pads` en un solo dict. Si no hay `imports:`, carga `pads:` directamente (compatibilidad con formato anterior).
+
+Los templates de referencia viven en `{so}/example/` y se versionan. Los archivos reales (`commands.{so}.yaml` y `{so}/*.yaml` directamente) están en `.gitignore`.
 
 Los `pad_id` son las notas MIDI del dispositivo. Para el nanoPAD2, los pads van del 36 al 51.

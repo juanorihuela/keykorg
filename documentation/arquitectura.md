@@ -21,10 +21,21 @@ keykorg/
     │   ├── log_config.py            # Clase LogConfig — setup de logging
     │   ├── settings.py              # Clase Settings — carga .env + validaciones
     │   └── commands/
-    │       ├── commands.debian.yaml         # Mapeo de pads para Debian (gitignored)
-    │       ├── commands.macos.yaml          # Mapeo de pads para macOS (gitignored)
-    │       ├── commands.debian.example.yaml # Template de referencia para Debian
-    │       └── commands.macos.example.yaml  # Template de referencia para macOS
+    │       ├── commands.debian.yaml         # Raíz Debian — solo imports (gitignored)
+    │       ├── commands.debian.example.yaml # Template raíz Debian (versionado)
+    │       ├── commands.macos.yaml          # Raíz macOS — solo imports (gitignored)
+    │       ├── commands.macos.example.yaml  # Template raíz macOS (versionado)
+    │       ├── debian/
+    │       │   ├── scene_1.yaml             # Apps, Sistema & Modos (gitignored)
+    │       │   └── example/                 # Templates de referencia (versionados)
+    │       │       ├── apps.example.yaml
+    │       │       ├── dev.example.yaml
+    │       │       └── misc.example.yaml
+    │       └── macos/
+    │           ├── *.yaml                   # Escenarios personales (gitignored)
+    │           └── example/        # Templates de referencia (versionados)
+    │               ├── apps.example.yaml
+    │               └── dev.example.yaml
     ├── core/
     │   └── midi_listener.py         # Escucha el dispositivo MIDI, emite PadEvents
     ├── dtos/
@@ -47,7 +58,8 @@ keykorg/
         │   ├── alert.wav            # Errores críticos
         │   └── bye.wav              # Cierre del programa
         └── scripts/
-            ├── script.example.sh        # Template de referencia (versionado)
+            ├── examples/
+            │   └── script.example.sh    # Template de referencia (versionado)
             └── *.sh                     # Scripts personales (gitignored)
 ```
 
