@@ -33,6 +33,9 @@ class PadHandler:
 
         logger.info(f"PAD_PRESS | pad_id={event.pad_id} | name={pad_name!r} | type={pad_type}")
 
+        if pad_type == "sequence":
+            self.notification_service.notify_sequence()
+
         success = self._dispatch(pad_type, pad_config, pad_name)
 
         if success:

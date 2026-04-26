@@ -28,15 +28,21 @@ class SequenceService:
         action = step.get("action")
 
         if action == "close_all":
-            subprocess.Popen(["wmctrl", "-k", "on"])
+            result = subprocess.run(["wmctrl", "-l"], capture_output=True, text=True)
+            window_ids = [line.split()[0] for line in result.stdout.splitlines() if line.split()]
+            for wid in window_ids:
+                subprocess.run(["wmctrl", "-ic", wid])
+            time.sleep(1.0)
 
         elif action == "open":
             app = step.get("app", "")
             subprocess.Popen(shlex.split(app))
 
         elif action == "notify":
-            message = step.get("message", "")
-            subprocess.Popen(["notify-send", message])
+            if "sound" in step:
+                self.notification_service.play_sound(step["sound"])
+            elif "message" in step:
+                subprocess.Popen(["notify-send", step["message"]])
 
         elif action == "delay":
             time.sleep(float(step.get("seconds", 1)))

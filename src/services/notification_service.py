@@ -16,6 +16,12 @@ class NotificationService:
         self._notify(title, message)
         self._play_sound("success.wav")
 
+    def notify_sequence(self) -> None:
+        self._play_sound("sequence.wav")
+
+    def play_sound(self, filename: str) -> None:
+        self._play_sound(filename)
+
     def notify_done(
         self,
         title: str,
