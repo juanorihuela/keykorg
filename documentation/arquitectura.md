@@ -13,6 +13,15 @@ keykorg/
 ├── .env.debian                      # Config de entorno para distros Debian-based
 ├── .env.macos                       # Config de entorno para macOS (pending)
 ├── requirements.txt
+├── pyproject.toml                   # Configuración de Ruff, pytest y coverage
+├── Makefile                         # Comandos del proyecto (setup, lint, test, run…)
+├── scripts/
+│   ├── setup.sh                     # Crea .venv e instala deps
+│   └── check_env.sh                 # Valida que el .env esté completo antes de `run`
+├── tests/                           # Tests automáticos (pytest)
+│   ├── conftest.py                  # Fixture global: make_pad_event()
+│   └── unit/                        # Tests unitarios por módulo
+│       └── test_*.py
 ├── documentation/                   # Esta carpeta
 └── src/
     ├── main.py                      # Punto de entrada — solo orquestación

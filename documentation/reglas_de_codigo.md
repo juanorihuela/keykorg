@@ -76,6 +76,27 @@ Formato, catálogo de eventos y convenciones en [documentation/config/logging.md
 
 ---
 
+## Lint y formato (Ruff)
+
+El proyecto usa Ruff como único linter y formateador. Configuración en `pyproject.toml`.
+
+- `make check` — verifica lint + formato sin modificar (usar en CI)
+- `make lint-fix` — corrige automáticamente lo que puede Ruff
+- El código debe pasar `make check` sin errores antes de integrar
+
+Detalle de reglas activas y comandos en [herramientas/tooling.md](herramientas/tooling.md).
+
+---
+
+## Tests
+
+- Los tests viven en `tests/unit/`, un archivo por módulo: `test_<nombre>.py`
+- Los tests no tocan disco, red ni hardware — todo se mockea con `MagicMock` o `patch`
+- Cobertura mínima: **80%** — `make test-cov` falla si no se alcanza
+- Módulos que dependen de hardware o del SO están excluidos de coverage (ver [herramientas/tests.md](herramientas/tests.md))
+
+---
+
 ## YAML, scripts y sonidos
 
 Reglas de configuración de YAML en [config/yaml_comandos.md](config/yaml_comandos.md) y scripts en [config/scripts.md](config/scripts.md).

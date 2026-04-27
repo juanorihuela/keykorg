@@ -41,3 +41,13 @@ Archivo raíz. Cada sección enlaza a la documentación específica.
 | [guia_devs/onboarding.md](guia_devs/onboarding.md) | Orden recomendado para leer y entender el proyecto |
 | [guia_devs/integraciones.md](guia_devs/integraciones.md) | Cómo integrar cambios: acciones, SOs, notificaciones, servicios |
 | [guia_devs/patrones_y_checklist.md](guia_devs/patrones_y_checklist.md) | Patrones obligatorios, qué no hacer, checklist de verificación |
+| [guia_devs/como_documentar.md](guia_devs/como_documentar.md) | Reglas para mantener `documentation/`: responsabilidad única, límite de líneas, dirs, README |
+
+---
+
+## Herramientas
+
+| Documento | Qué cubre |
+|---|---|
+| [herramientas/tooling.md](herramientas/tooling.md) | Makefile (targets), Ruff (lint/formato), pyproject.toml |
+| [herramientas/tests.md](herramientas/tests.md) | pytest, estructura de tests, coverage, conftest, convenciones |

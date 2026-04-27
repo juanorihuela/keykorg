@@ -62,3 +62,6 @@ sound_path = Path("src/static/sounds/archivo.wav")
 5. ¿Las constantes nuevas están en `constants.py`?
 6. ¿`main.py` sigue siendo solo orquestación?
 7. ¿Los services nuevos reciben `NotificationService` si pueden fallar?
+8. ¿El módulo nuevo tiene su `test_<nombre>.py` en `tests/unit/`?
+9. ¿`make check` pasa sin errores (lint + formato)?
+10. ¿`make test-cov` pasa el umbral del 80%?

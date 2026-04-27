@@ -1,45 +1,70 @@
-# KeyKorg Script
-Keypad o MicroPad DIY con MIDI
-+ abrir un programa, terminal o ventana de navegador usando los pads del dispositivo
-+ personalizar comandos y acciones para cada pad
+# KeyKorg
 
+Controlador MIDI por software para Linux. Escucha eventos de un dispositivo MIDI físico (nanoPAD2 u otro) y ejecuta comandos o secuencias de acciones en el sistema operativo según el pad presionado.
 
-## Estructura del proyecto  
-+ python
-+ mido
-+ rtmidi
-+ pip (gestor de paquetes)  
+---
 
+## Requisitos
 
-## Instalación  
+- Python 3.12
+- Dispositivo MIDI conectado (USB o ALSA)
+- Distro Debian-based (Ubuntu, Linux Mint, Pop!_OS…) — macOS en desarrollo
 
-### clonar repositorio
-`git clone <URL_REPO>`  
+---
 
-### crear venv
-Crea un entorno virtual para ejecutar el script  
-`python -m venv <VENV_NAME>`
+## Setup
 
-### instalar paquetes
-Instala los paquetes usando yarn  
-`pip install -r requirements.txt`
+```bash
+make setup SO=debian
+```
 
-### iniciar el script
-`python src/control.py`
+Crea el `.venv`, instala dependencias y copia `.env.debian.example` como `.env.debian`.
 
+Editar `.env.debian` y completar `MIDI_DEVICE` con el nombre del dispositivo:
 
-## Ruff
-# Revisar errores en todo el proyecto
-ruff check .
+```bash
+# listar dispositivos disponibles
+aconnect -l
+```
 
-# Corregir automáticamente lo que pueda
-ruff check . --fix
+Crear el archivo de comandos a partir del template:
 
-# Formatear código (como Black)
-ruff format .
+```bash
+cp src/config/commands/commands.debian.example.yaml \
+   src/config/commands/commands.debian.yaml
+```
 
-# Revisar qué cambiaría sin aplicarlo
-ruff format . --check
+---
 
-## Test
-pytest --cov --cov-report=term-missing
+## Ejecutar
+
+```bash
+make run
+```
+
+Valida el `.env` y arranca la app. El proceso queda escuchando el dispositivo MIDI.
+Salir con `Ctrl+C`.
+
+---
+
+## Desarrollo
+
+```bash
+make lint-fix    # corrige y formatea con Ruff
+make check       # verifica lint + formato sin modificar (CI)
+make test        # corre los tests con pytest
+make test-cov    # tests + reporte de cobertura (umbral: 80%)
+make clean       # elimina cachés y .pyc
+```
+
+Ver todos los comandos disponibles:
+
+```bash
+make help
+```
+
+---
+
+## Documentación
+
+[documentation/README.md](documentation/README.md) — índice completo de la documentación interna.

@@ -15,8 +15,10 @@ Orden recomendado para leer y entender el sistema antes de hacer cambios.
 7. [../config/yaml_comandos.md](../config/yaml_comandos.md) — configuración de pads
 8. [../config/scripts.md](../config/scripts.md) — scripts de shell
 9. [../config/logging.md](../config/logging.md) — sistema de logs, formato y convenciones
-10. `src/config/constants.py` — constantes del sistema
-11. `src/config/settings.py` — cómo se carga la configuración
-12. `src/main.py` — punto de entrada, flujo de arranque
-13. `src/config/commands/commands.debian.example.yaml` — template raíz (imports)
-14. `src/config/commands/debian/example/apps.example.yaml` — template de escenario
+10. [../herramientas/tooling.md](../herramientas/tooling.md) — Makefile, Ruff, pyproject.toml
+11. [../herramientas/tests.md](../herramientas/tests.md) — estructura de tests, coverage, convenciones
+12. `src/config/constants.py` — constantes del sistema
+13. `src/config/settings.py` — cómo se carga la configuración
+14. `src/main.py` — punto de entrada, flujo de arranque
+15. `src/config/commands/commands.debian.example.yaml` — template raíz (imports)
+16. `src/config/commands/debian/example/apps.example.yaml` — template de escenario
