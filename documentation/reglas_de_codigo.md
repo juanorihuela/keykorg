@@ -51,6 +51,10 @@ Semántica de los 5 tipos — no intercambiar:
 | `notify_alert` | Error crítico: excepción inesperada, fallo de conexión |
 | `notify_bye` | Cierre del programa (KeyboardInterrupt) |
 
+`play_sound(filename)` es un método público para reproducir sonidos arbitrarios. Usado por `SequenceService` para `wait.wav` durante steps bloqueantes.
+
+Sonido `wait.wav` — "procesando": se reproduce en loop mientras un step `shell` con `wait: true` sigue corriendo pasado el `wait_threshold`. Semánticamente distinto a los 5 tipos de notificación.
+
 ---
 
 ## Logging

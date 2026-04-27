@@ -106,7 +106,7 @@ Recibe `NotificationService` en el constructor. Ejecuta una lista de pasos en or
 | `close_all` | cierra todas las ventanas (`wmctrl -k on`) |
 | `notify` | muestra notificación de SO sin sonido |
 | `delay` | espera N segundos (`seconds`) |
-| `shell` | ejecuta `command` arbitrario |
+| `shell` | ejecuta `command` arbitrario; `wait: true` bloquea hasta que termine; `wait_threshold` (default 2s) dispara `wait.wav` en loop si el proceso tarda más |
 
 Si un paso falla, la excepción sube, `execute()` llama `notify_alert` y retorna `False`.
 
@@ -125,6 +125,8 @@ Los 5 tipos y su semántica:
 | `notify_warning` | `warning.wav` | Alerta no crítica (cmd no encontrado, pad sin mapear, tipo desconocido) |
 | `notify_alert` | `alert.wav` | Error crítico o excepción |
 | `notify_bye` | `bye.wav` | Cierre del programa por KeyboardInterrupt |
+
+`play_sound(filename)` permite reproducir cualquier sonido directamente (usado por `SequenceService` para `wait.wav`).
 
 El reproductor de audio se detecta en `os_helpers.get_sound_player(volume)`. Orden de preferencia: `paplay` (soporta volumen), `afplay`, `aplay` (sin control de volumen por comando).
 

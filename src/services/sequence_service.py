@@ -1,5 +1,6 @@
 import shlex
 import subprocess
+import threading
 import time
 import logging
 from typing import Any
@@ -49,7 +50,34 @@ class SequenceService:
 
         elif action == "shell":
             command = step.get("command", "")
-            subprocess.Popen(shlex.split(command))
+            wait = step.get("wait", False)
+            threshold = step.get("wait_threshold", 2)
+            if wait:
+                self._run_blocking(command, threshold)
+            else:
+                subprocess.Popen(shlex.split(command))
 
         else:
             logger.warning(f"SEQ_UNKNOWN_ACTION | action={action!r}")
+
+    def _run_blocking(self, command: str, threshold: int) -> None:
+        proc = subprocess.Popen(shlex.split(command))
+
+        try:
+            proc.wait(timeout=threshold)
+            return
+        except subprocess.TimeoutExpired:
+            pass
+
+        wait_thread = threading.Thread(
+            target=self._play_wait_loop,
+            args=(proc,),
+            daemon=True
+        )
+        wait_thread.start()
+        proc.wait()
+
+    def _play_wait_loop(self, proc: subprocess.Popen) -> None:
+        while proc.poll() is None:
+            self.notification_service.play_sound("wait.wav")
+            time.sleep(1)

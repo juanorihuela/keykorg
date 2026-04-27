@@ -45,6 +45,7 @@ Los `pad_id` son las notas MIDI del dispositivo. Para el nanoPAD2 van del 36 al 
 - Los comandos `simple` usan strings completos parseados con `shlex.split`
 - Los paths relativos en comandos se resuelven automáticamente contra `PROJECT_ROOT` en `Settings.load_pad_map()`
 - Las secuencias usan solo las acciones definidas: `open`, `close_all`, `notify`, `delay`, `shell`
+- En `shell`, `wait: true` hace el step bloqueante; `wait_threshold` (int, segundos, default `2`) define cuándo se activa `wait.wav`
 
 ---
 
@@ -74,6 +75,10 @@ pads:
         seconds: 1
       - action: shell
         command: "mi-comando"
+      - action: shell
+        command: "src/static/scripts/end_of_day.py"
+        wait: true          # bloquea hasta que el proceso termine
+        wait_threshold: 2   # segundos antes de disparar wait.wav (default: 2)
 ```
 
 Los paths relativos (ej: `src/static/scripts/mi_script.sh`) se resuelven automáticamente a absolutos en `Settings.load_pad_map()`.
