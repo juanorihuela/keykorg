@@ -13,7 +13,7 @@ def get_host_so() -> str | None:
 
 
 def get_sound_player(volume: float = 1.0) -> list[str]:
-    # paplay primero: soporta control de volumen nativo (0–65536)
+    # paplay primero: soporta control de volumen nativo (0-65536)
     if shutil.which("paplay"):
         int_vol = int(volume * 65536)
         return ["paplay", f"--volume={int_vol}"]

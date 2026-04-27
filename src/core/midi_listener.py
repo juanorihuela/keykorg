@@ -1,10 +1,11 @@
-import mido
 import logging
 import time
+from collections.abc import Callable
 from datetime import datetime
-from typing import Callable
 
-from config.constants import CONNECTION_RETRIES, CONNECTION_DELAY
+import mido
+
+from config.constants import CONNECTION_DELAY, CONNECTION_RETRIES
 from dtos.pad_event import PadEvent
 
 logger = logging.getLogger(__name__)
@@ -50,5 +51,7 @@ class MidiListener:
                             timestamp=datetime.now(),
                         )
                         self.on_pad_press(event)
-                elif msg.type == "note_off" or (msg.type == "note_on" and msg.velocity == 0):
+                elif msg.type == "note_off" or (
+                    msg.type == "note_on" and msg.velocity == 0
+                ):
                     active_notes.discard(msg.note)

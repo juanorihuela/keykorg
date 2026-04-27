@@ -2,8 +2,8 @@ import logging
 
 from dtos.pad_event import PadEvent
 from services.command_service import CommandService
-from services.sequence_service import SequenceService
 from services.notification_service import NotificationService
+from services.sequence_service import SequenceService
 
 logger = logging.getLogger(__name__)
 
@@ -25,13 +25,17 @@ class PadHandler:
         pad_config = self.pad_map.get(event.pad_id)
         if not pad_config:
             logger.warning(f"PAD_UNMAPPED | pad_id={event.pad_id}")
-            self.notification_service.notify_warning("Pad sin mapear", f"pad_id={event.pad_id}")
+            self.notification_service.notify_warning(
+                "Pad sin mapear", f"pad_id={event.pad_id}"
+            )
             return
 
         pad_name = pad_config.get("name", f"pad_{event.pad_id}")
         pad_type = pad_config.get("type")
 
-        logger.info(f"PAD_PRESS | pad_id={event.pad_id} | name={pad_name!r} | type={pad_type}")
+        logger.info(
+            f"PAD_PRESS | pad_id={event.pad_id} | name={pad_name!r} | type={pad_type}"
+        )
 
         if pad_type == "sequence":
             self.notification_service.notify_sequence()

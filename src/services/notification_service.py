@@ -1,5 +1,5 @@
-import subprocess
 import logging
+import subprocess
 from pathlib import Path
 
 from helpers.os_helpers import get_sound_player

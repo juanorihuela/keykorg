@@ -1,8 +1,8 @@
+import logging
 import shlex
 import subprocess
 import threading
 import time
-import logging
 from typing import Any
 
 from services.notification_service import NotificationService
@@ -21,7 +21,9 @@ class SequenceService:
             logger.info(f"SEQ_OK | name={pad_name!r}")
             return True
         except Exception as ex:
-            logger.error(f"SEQ_FAIL | name={pad_name!r} | error={type(ex).__name__}: {ex}")
+            logger.error(
+                f"SEQ_FAIL | name={pad_name!r} | error={type(ex).__name__}: {ex}"
+            )
             self.notification_service.notify_alert(pad_name, "Error en secuencia")
             return False
 
@@ -30,7 +32,9 @@ class SequenceService:
 
         if action == "close_all":
             result = subprocess.run(["wmctrl", "-l"], capture_output=True, text=True)
-            window_ids = [line.split()[0] for line in result.stdout.splitlines() if line.split()]
+            window_ids = [
+                line.split()[0] for line in result.stdout.splitlines() if line.split()
+            ]
             for wid in window_ids:
                 subprocess.run(["wmctrl", "-ic", wid])
             time.sleep(1.0)
@@ -70,9 +74,7 @@ class SequenceService:
             pass
 
         wait_thread = threading.Thread(
-            target=self._play_wait_loop,
-            args=(proc,),
-            daemon=True
+            target=self._play_wait_loop, args=(proc,), daemon=True
         )
         wait_thread.start()
         proc.wait()

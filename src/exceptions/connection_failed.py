@@ -1,2 +1,2 @@
-class ConnectionFailedException(Exception):
+class ConnectionFailedError(Exception):
     pass

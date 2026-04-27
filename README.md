@@ -26,3 +26,16 @@ Instala los paquetes usando yarn
 
 ### iniciar el script
 `python src/control.py`
+
+
+# Revisar errores en todo el proyecto
+ruff check .
+
+# Corregir automáticamente lo que pueda
+ruff check . --fix
+
+# Formatear código (como Black)
+ruff format .
+
+# Revisar qué cambiaría sin aplicarlo
+ruff format . --check

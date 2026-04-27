@@ -6,11 +6,11 @@ from config.constants import SO_CATALOG
 from config.log_config import LogConfig
 from config.settings import Settings
 from core.midi_listener import MidiListener
+from exceptions.connection_failed import ConnectionFailedError
 from handlers.pad_handler import PadHandler
 from services.command_service import CommandService
-from services.sequence_service import SequenceService
 from services.notification_service import NotificationService
-from exceptions.connection_failed import ConnectionFailedException
+from services.sequence_service import SequenceService
 
 logger = logging.getLogger(__name__)
 
@@ -39,7 +39,7 @@ def main() -> None:
 
     try:
         if not MidiListener.wait_for_connection(settings.midi_device):
-            raise ConnectionFailedException("No se encuentra el dispositivo")
+            raise ConnectionFailedError("No se encuentra el dispositivo")
 
         notifier.notify_success("KeyKorg conectado ✓")
 
@@ -56,7 +56,7 @@ def main() -> None:
         logger.info("KeyKorg detenido por el usuario")
         notifier.notify_bye("KeyKorg", "Saliendo")
 
-    except ConnectionFailedException as ex:
+    except ConnectionFailedError as ex:
         logger.error(f"CONNECTION_FAIL | error={ex}")
         notifier.notify_alert("No se pudo conectar a KeyKorg")
 
