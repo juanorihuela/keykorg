@@ -28,6 +28,7 @@ Instala los paquetes usando yarn
 `python src/control.py`
 
 
+## Ruff
 # Revisar errores en todo el proyecto
 ruff check .
 
@@ -39,3 +40,6 @@ ruff format .
 
 # Revisar qué cambiaría sin aplicarlo
 ruff format . --check
+
+## Test
+pytest --cov --cov-report=term-missing

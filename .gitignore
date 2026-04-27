@@ -27,3 +27,10 @@ src/static/scripts/*
 # log
 logs
 .log
+
+# Ruff
+.ruff_cache
+
+# pytest
+.coverage
+.pytest_cache
