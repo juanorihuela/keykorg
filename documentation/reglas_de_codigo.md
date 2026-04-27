@@ -78,4 +78,4 @@ Formato, catálogo de eventos y convenciones en [documentation/config/logging.md
 
 ## YAML, scripts y sonidos
 
-Reglas de configuración de archivos en [documentation/config/yaml_y_scripts.md](config/yaml_y_scripts.md).
+Reglas de configuración de YAML en [config/yaml_comandos.md](config/yaml_comandos.md) y scripts en [config/scripts.md](config/scripts.md).

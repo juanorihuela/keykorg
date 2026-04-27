@@ -1,6 +1,6 @@
-# Configuración: YAML, Scripts y Sonidos — KeyKorg
+# Configuración: YAML de Comandos — KeyKorg
 
-Cubre la configuración basada en archivos: comandos YAML de pads, scripts de shell y sonidos estáticos. No requiere tocar código Python.
+Cubre la configuración de pads basada en archivos YAML. No requiere tocar código Python.
 
 ---
 
@@ -32,7 +32,7 @@ pads:
 
 Los templates de referencia viven en `{so}/example/` y se versionan. Los archivos reales (`commands.{so}.yaml` y `{so}/*.yaml`) están en `.gitignore`.
 
-Los `pad_id` son las notas MIDI del dispositivo. Para el nanoPAD2 van del 36 al 51.
+Los `pad_id` son las notas MIDI del dispositivo. Puede variar entre hardware.
 
 ---
 
@@ -107,42 +107,3 @@ imports:
 ```
 
 El archivo de escenario es personal y queda ignorado por `.gitignore`. Si querés que otros lo usen como referencia, creá el equivalente en `debian/example/mi_escenario.example.yaml` — ese sí se versiona.
-
----
-
-## Agregar un script nuevo
-
-Cada comando que requiera un script de shell tiene su propio archivo `.sh` en `src/static/scripts/`.
-
-**Paso 1** — Crear `src/static/scripts/mi_script.sh` basándose en `scripts/examples/script.example.sh`:
-
-```bash
-#!/bin/bash
-sleep 0.3
-xdotool type "mi-comando"
-sleep 0.3
-xdotool key Return
-```
-
-**Paso 2** — Darle permisos de ejecución:
-
-```bash
-chmod +x src/static/scripts/mi_script.sh
-```
-
-**Paso 3** — Referenciarlo en el YAML con path relativo:
-
-```yaml
-pads:
-  44:
-    name: "Mi Script"
-    type: sequence
-    steps:
-      - action: shell
-        command: "src/static/scripts/mi_script.sh"
-```
-
-El path se resuelve automáticamente. No hardcodear el path absoluto en el YAML.
-
-Los scripts personales están en `.gitignore` (`src/static/scripts/*`). El directorio `scripts/examples/` sí se versiona.
-

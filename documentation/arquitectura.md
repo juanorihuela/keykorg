@@ -136,8 +136,3 @@ Cada SO tiene:
 
 El catálogo de SOs disponibles vive en `src/config/constants.py` (`SO_CATALOG`). Un SO puede estar en estado `"active"` o `"pending"`. Si está `"pending"`, el programa termina con error al arrancar.
 
----
-
-## Logging
-
-Documentación completa en [documentation/config/logging.md](config/logging.md).
