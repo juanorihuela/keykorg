@@ -48,7 +48,9 @@ class TestExecute:
             {"action": "open", "app": "app2"},
             {"action": "open", "app": "app3"},
         ]
-        with patch("services.sequence_service.subprocess.Popen", side_effect=popen_side_effect):
+        with patch(
+            "services.sequence_service.subprocess.Popen", side_effect=popen_side_effect
+        ):
             result = svc.execute(steps, "mypad")
 
         assert result is False
@@ -75,7 +77,12 @@ class TestRunStep:
     def test_shell_with_wait_delegates_to_run_blocking(self, svc):
         with patch.object(svc, "_run_blocking") as mock_blocking:
             svc._run_step(
-                {"action": "shell", "command": "long_task.sh", "wait": True, "wait_threshold": 5}
+                {
+                    "action": "shell",
+                    "command": "long_task.sh",
+                    "wait": True,
+                    "wait_threshold": 5,
+                }
             )
         mock_blocking.assert_called_once_with("long_task.sh", 5)
 

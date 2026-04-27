@@ -29,7 +29,9 @@ class TestExecute:
         ):
             result = svc.execute("nonexistent_cmd", "mypad")
         assert result is False
-        notifier.notify_warning.assert_called_once_with("mypad", "Comando no encontrado")
+        notifier.notify_warning.assert_called_once_with(
+            "mypad", "Comando no encontrado"
+        )
         notifier.notify_alert.assert_not_called()
 
     def test_generic_error_returns_false_and_alerts(self, svc, notifier):
@@ -39,7 +41,9 @@ class TestExecute:
         ):
             result = svc.execute("restricted_cmd", "mypad")
         assert result is False
-        notifier.notify_alert.assert_called_once_with("mypad", "Error al ejecutar comando")
+        notifier.notify_alert.assert_called_once_with(
+            "mypad", "Error al ejecutar comando"
+        )
         notifier.notify_warning.assert_not_called()
 
     def test_empty_command_calls_popen_with_empty_list(self, svc):

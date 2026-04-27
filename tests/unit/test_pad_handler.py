@@ -1,3 +1,4 @@
+from typing import ClassVar
 from unittest.mock import MagicMock
 
 import pytest
@@ -38,13 +39,17 @@ class TestUnmappedPad:
 
 class TestSimpleType:
     def _pad_map(self, **extra):
-        return {1: {"name": "test_pad", "type": "simple", "command": "echo hello", **extra}}
+        return {
+            1: {"name": "test_pad", "type": "simple", "command": "echo hello", **extra}
+        }
 
     def test_happy_path(self, services):
         services["command_service"].execute.return_value = True
         make_handler(self._pad_map(), services).handle(make_pad_event())
 
-        services["command_service"].execute.assert_called_once_with("echo hello", "test_pad")
+        services["command_service"].execute.assert_called_once_with(
+            "echo hello", "test_pad"
+        )
         services["notification_service"].notify_done.assert_called_once_with(
             "test_pad", skip_notify=False, skip_sound=False
         )
@@ -73,16 +78,16 @@ class TestSimpleType:
 
 
 class TestSequenceType:
-    _steps = [{"action": "open", "app": "firefox"}]
-    _pad_map = {1: {"name": "seq_pad", "type": "sequence", "steps": _steps}}
+    _steps: ClassVar = [{"action": "open", "app": "firefox"}]
+    _pad_map: ClassVar = {1: {"name": "seq_pad", "type": "sequence", "steps": _steps}}
 
     def test_notify_sequence_called_before_dispatch(self, services):
         call_order = []
-        services["notification_service"].notify_sequence.side_effect = (
-            lambda: call_order.append("notify_sequence")
+        services["notification_service"].notify_sequence.side_effect = lambda: (
+            call_order.append("notify_sequence")
         )
-        services["sequence_service"].execute.side_effect = (
-            lambda steps, name: call_order.append("execute") or True
+        services["sequence_service"].execute.side_effect = lambda steps, name: (
+            call_order.append("execute") or True
         )
 
         make_handler(self._pad_map, services).handle(make_pad_event())

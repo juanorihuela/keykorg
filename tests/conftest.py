@@ -1,7 +1,5 @@
 from datetime import datetime
 
-import pytest
-
 from dtos.pad_event import PadEvent
 
 
