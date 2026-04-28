@@ -5,9 +5,6 @@
 .pyc
 __pycache__
 
-# specs
-specs
-
 # envs
 .env.macos
 .env.debian
